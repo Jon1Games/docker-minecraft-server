@@ -13,6 +13,6 @@ Jon1Games/minecraft-server
 ```
 
 supported jar types are:
---> vanilla
---> paper
---> purpur
+- vanilla
+- paper
+- purpur
