@@ -74,7 +74,7 @@ fi
 
 if [ "$EULA" = "true" ]; then 
 	echo "eula=true" > ./eula.txt
-	exec java -Xmx${maxRam}G -jar "$jarFile" -nogui
+	exec java -jar "$jarFile" -nogui
 else
 	echo "eula=false" > ./eula.txt
         echo "Accept the eula"
