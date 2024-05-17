@@ -1,8 +1,0 @@
-services:
-  minecraft-server:
-    enviroment:
-      EULA: true
-      jarType: paper
-      version: 1.20.4
-    ports:
-      - "25565:25565"
