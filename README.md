@@ -1,3 +1,5 @@
+# docker-minecraft-server
+
 First you need to create an volume for the server
 ```sh
 sudo docker volume  create minecraft-server
