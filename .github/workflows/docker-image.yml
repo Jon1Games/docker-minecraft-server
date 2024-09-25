@@ -24,4 +24,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: jon1games/minecraft-server:latest
+          tags: jon1games/minecraft-server:1.0
