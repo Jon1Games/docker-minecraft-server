@@ -8,6 +8,6 @@ RUN apt -y install jq wget
 
 COPY --chmod=755 scripts/start.sh /
 
-EXPOSE 25565
+EXPOSE 25565/tcp
 
 CMD /start.sh
