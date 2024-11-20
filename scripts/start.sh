@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# ENV: EULA, jarType, Version, BUILD(not for Vanilla)
+# ENV: EULA, jarType, Version, BUILD(not for Vanilla), redownload, reinstall
 
 if [ -z "${jarType}" ]; then 
 	echo "Unknows jar type, use one of these:"
@@ -14,15 +14,29 @@ if [ -z "${version}" ]; then
 	exit 1
 fi
 
+if [ -z "${reinstall}" ]; then
+    rm *
+fi
+
 # Check if wisched jar already exist, if set to ${jarFile} to allow starting
 ## Check for Vanilla Jar
 if [ -e "${jarType}-${version}.jar" ]; then
     jarFile="${jarType}-${version}.jar"
-    echo "using existing Jar"
+    if [ -z "${redownload}" ]; then
+        rm ${jarFile} 
+        echo "redowloading jar"
+    else 
+        echo "using existing Jar"
+    fi
 ## Check for Paper,PurPur,Fabric Jar
 elif [ -e "${jarType}-${version}-${BUILD}.jar" ]; then
     jarFile="${jarType}-${version}-${BUILD}.jar"
-    echo "using existing Jar"
+    if [ -z "${redownload}" ]; then
+        rm ${jarFile} 
+        echo "redowloading jar"
+    else 
+        echo "using existing Jar"
+    fi
 # Download Jar
 else
     case "$jarType" in
