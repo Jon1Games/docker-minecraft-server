@@ -10,4 +10,4 @@ COPY --chmod=755 scripts/start.sh /
 
 EXPOSE 25565/tcp
 
-CMD /start.sh
+CMD ["/bin/sh", "/start.sh"]

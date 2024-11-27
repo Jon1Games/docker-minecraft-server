@@ -15,4 +15,6 @@ supported jar types are:
 
 - vanilla
 - paper
+- velocity
 - purpur
+- fabric

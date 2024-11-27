@@ -1,11 +1,11 @@
 #!/bin/sh
 
-# ENV: EULA, jarType, Version, BUILD(not for Vanilla)
+# ENV: EULA, jarType, Version, BUILD(not for Vanilla), velocity
 
 if [ -z "${jarType}" ]; then 
 	echo "Unknows jar type, use one of these:"
 	echo " -> vanilla, paper, purpur"
-    echo " -> TODO: Forge, NeoForge, Fabrik"
+    echo " -> TODO: Forge, NeoForge"
 	exit 1
 fi
 
@@ -26,8 +26,31 @@ elif [ -e "${jarType}-${version}-${BUILD}.jar" ]; then
 # Download Jar
 else
     case "$jarType" in
+        velocity)
+            if [ "$version" = "latest" ]; then
+                version=$(wget -O - -q https://api.papermc.io/v2/projects/velocity/ | \
+                    jq -r '.versions | sort_by(.) | .[-1]')
+            fi
+            if [ "$BUILD" = "latest" ]; then
+                BUILD=$(wget -O - -q https://api.papermc.io/v2/projects/velocity/versions/${version}/builds | \
+                    jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
+            
+                if [ -z "$BUILD" ]; then
+                    echo "Invalid version"
+                    exit 1
+                fi
+                if [ "$BUILD" = "null" ]; then
+                    echo "No stable build for version $version found :("
+                    exit 2
+                fi
+            fi
+            rmident=velocity
+            jarFile=${rmident}-${version}-${BUILD}.jar
+            url="https://api.papermc.io/v2/projects/velocity/versions/${version}/builds/${BUILD}/downloads/${jarFile}"
+            ;;
+
         paper)
-            if [ "$BUILD" = "latest"]; then
+            if [ "$BUILD" = "latest" ]; then
                 BUILD=$(wget -O - -q https://api.papermc.io/v2/projects/paper/versions/${version}/builds | \
                     jq -r '.builds | map(select(.channel == "default") | .build) | .[-1]')
             
@@ -54,7 +77,7 @@ else
             ;;
 
         purpur)
-            if [ "$BUILD" = "latest"]; then
+            if [ "$BUILD" = "latest" ]; then
                 LATEST_BUILD=$(wget -O - -q https://api.purpurmc.org/v2/purpur/${version}/ | \
                     jq -r ".builds.latest")
             
@@ -73,7 +96,7 @@ else
             ;;
 
         fabric)
-            if [ "$BUILD" = "latest"]; then
+            if [ "$BUILD" = "latest" ]; then
                 LATEST_BUILD=$(wget -O - -q https://meta.fabricmc.net/v2/versions/loader/${version}/ | \
                     jq -r ".[0].loader.version")
             
@@ -96,7 +119,7 @@ else
         *)
         echo "Unknows jar type, use one of these:"
         echo " -> vanilla, paper, purpur"
-        echo " -> TODO: Forge, NeoForge, Fabrik"
+        echo " -> TODO: Forge, NeoForge"
             exit 1
             ;;
     esac
@@ -122,14 +145,18 @@ if [ "$EULA" = "true" ]; then
         paper)
             exec java -jar "$jarFile" -nogui
             ;;
+        velocity)
+            exec java -jar "$jarFile"
+            ;;
         purpur)
             exec java -jar "$jarFile" -nogui
             ;;
         fabric)
             exec java -jar "$jarFile" -nogui
             ;;
+    esac
 else
 	echo "eula=false" > ./eula.txt
     echo "Accept the eula"
 	echo "enviroment variable: EULA=true"
-fi	
+fi
